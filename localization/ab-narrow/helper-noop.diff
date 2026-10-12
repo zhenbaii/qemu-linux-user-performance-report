@@ -1,0 +1,34 @@
+diff --git a/target/riscv/tcg/op_helper.c b/target/riscv/tcg/op_helper.c
+index b67c7718db..3eb4d40a5a 100644
+--- a/target/riscv/tcg/op_helper.c
++++ b/target/riscv/tcg/op_helper.c
+@@ -307,28 +307,7 @@ void helper_riscv_invalidate_reservations(CPURISCVState *env,
+                                           target_ulong addr,
+                                           target_ulong size)
+ {
+-    CPUState *cpu;
+-
+-    /* EXCP_ATOMIC keeps other guest harts out while this list is updated. */
+-    WITH_RCU_READ_LOCK_GUARD() {
+-        CPU_FOREACH(cpu) {
+-            CPURISCVState *other_env = cpu_env(cpu);
+-            target_ulong reservation = other_env->load_res;
+-            target_ulong reservation_size = other_env->load_res_size;
+-            bool overlap;
+-
+-            if (other_env == env || reservation == (target_ulong)-1) {
+-                continue;
+-            }
+-            overlap = reservation < addr
+-                ? addr - reservation < reservation_size
+-                : reservation - addr < size;
+-            if (overlap) {
+-                other_env->load_res = -1;
+-                other_env->load_res_size = 0;
+-            }
+-        }
+-    }
++    /* Diagnostic variant: measure atomic fallback without list scanning. */
+ }
+ 
+ #endif

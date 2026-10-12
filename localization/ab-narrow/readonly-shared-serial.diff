@@ -1,0 +1,14 @@
+diff --git a/linux-user/mmap.c b/linux-user/mmap.c
+index dd957db55a..927db96a1f 100644
+--- a/linux-user/mmap.c
++++ b/linux-user/mmap.c
+@@ -1015,7 +1015,8 @@ abi_long target_mmap(abi_ulong start, abi_ulong len, int target_prot,
+      * supported by the host -- anything that requires EXCP_ATOMIC will not
+      * be atomic with respect to an external process.
+      */
+-    if (ret != -1 && (flags & MAP_TYPE) != MAP_PRIVATE) {
++    if (ret != -1 && (flags & MAP_TYPE) != MAP_PRIVATE &&
++        (target_prot & PROT_WRITE)) {
+         begin_parallel_context(thread_cpu);
+     }
+ 

@@ -1,0 +1,53 @@
+# quprof
+
+- 命令：`['osc', '-A', 'https://build.openruyi.cn', 'build', '--skip-local-service-run', '--offline', '--keep-pkgs', '/home/holo/ospp-qemu-optimisation/research/build-workloads/runs/20261011-224551-file-coarse/rpms', '-j', '4', 'riscv64', 'riscv64']`
+- 状态：退出码 0；collector ok；validation ok
+- 时间：wall 1609.929s；cgroup CPU 2288.162s
+- 采样：cycles:u；已证实 QEMU 样本 442448；lost 0
+- 占比分母：QEMU self period 8445356880886；unknown 11.1%
+- 完整性：解析 442723/442723；未识别元数据 0
+- 范围：cgroup（CPU 含全部进程）；匿名代码归 unknown；JIT 区域、coarse-events 未采集
+
+## 工具线索（采样时线程名）
+
+仅 QEMU 样本；同名线程合并，可能含后台线程。占比是 period 权重，非耗时。
+
+| 线程名 / 工具线索 | 占比 | 样本 | period |
+| --- | ---: | ---: | ---: |
+| `cc1` | 19.4% | 74678 | 1637894809086 |
+| `m4` | 16.3% | 54946 | 1372933634404 |
+| `aclocal` | 12.2% | 41135 | 1031176590084 |
+| `lto1` | 9.9% | 33756 | 833877200957 |
+| `autom4te` | 8.5% | 28768 | 719595353424 |
+| `bash` | 6.5% | 28308 | 548258402847 |
+| `rpmbuild` | 6.4% | 100406 | 542540239073 |
+| `lto1-ltrans` | 5.9% | 20689 | 501332502741 |
+| `automake` | 2.3% | 7821 | 195634036527 |
+| `rpm` | 1.9% | 6302 | 156909641054 |
+| 其他线程名（80 种） | 10.7% | 45639 | 905204470689 |
+
+## 机制
+
+| 机制 | 占比 | 样本 | period |
+| --- | ---: | ---: | ---: |
+| 翻译与生成 | 20.7% | 82520 | 1751429891041 |
+| 查找调度/缓存维护 | 32.7% | 132634 | 2757422162256 |
+| helper | 9.9% | 38407 | 837933562748 |
+| linux-user syscall/signal/atomic | 8.0% | 33727 | 679275984266 |
+| host 共享运行时 | 17.5% | 97594 | 1480092466406 |
+| unknown | 11.1% | 57559 | 939141875966 |
+
+## 符号
+
+共 630 个可命名符号；按 period 排序，仅列前 8 个中占比 ≥1% 的项；若均不足则列前 3 个。完整聚合热点见 [`hotspots.csv.gz`](hotspots.csv.gz)；原始采样未纳入网页发布包。
+
+| 符号 | 机制 | 占比 | 样本 |
+| --- | --- | ---: | ---: |
+| `helper_riscv_invalidate_reservations` | helper | 7.7% | 30260 |
+| `helper_lookup_tb_ptr` | 查找调度/缓存维护 | 6.6% | 23447 |
+| `___pthread_mutex_unlock` | host 共享运行时 | 5.4% | 23311 |
+| `tb_tc_cmp` | 查找调度/缓存维护 | 4.7% | 19352 |
+| `liveness_pass_1` | 翻译与生成 | 4.6% | 18923 |
+| `cpu_restore_state_from_tb` | 翻译与生成 | 4.4% | 15412 |
+| `g_tree_lookup_node` | host 共享运行时 | 3.7% | 14843 |
+| `cpu_exec_end` | 查找调度/缓存维护 | 3.0% | 12206 |

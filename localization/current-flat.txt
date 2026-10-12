@@ -1,0 +1,686 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 2K of event 'cycles:u'
+# Event count (approx.): 64085497676
+#
+# Overhead  Command       Shared Object     Symbol                                  
+# ........  ............  ................  ........................................
+#
+     8.68%  qemu-riscv64  qemu-riscv64      [.] helper_riscv_invalidate_reservations
+            |          
+            |--7.04%--rcu_read_unlock (inlined)
+            |          rcu_read_auto_unlock (inlined)
+            |          helper_riscv_invalidate_reservations
+            |          
+             --1.48%--helper_riscv_invalidate_reservations
+
+     7.88%  qemu-riscv64  qemu-riscv64      [.] cpu_restore_state_from_tb
+            |
+            ---cpu_restore_state_from_tb
+               cpu_restore_state
+               cpu_loop_exit_restore
+               cpu_loop_exit_atomic
+               helper_exit_atomic
+
+     7.44%  qemu-riscv64  qemu-riscv64      [.] tb_tc_cmp
+            |          
+            |--5.59%--tb_tc_cmp
+            |          |          
+            |           --5.47%--g_tree_lookup_node
+            |                     g_tree_lookup
+            |                     q_tree_lookup (inlined)
+            |                     tcg_tb_lookup
+            |                     cpu_restore_state
+            |                     cpu_loop_exit_restore
+            |                     cpu_loop_exit_atomic
+            |                     helper_exit_atomic
+            |          
+             --1.85%--ptr_cmp_tb_tc (inlined)
+                       tb_tc_cmp
+                       g_tree_lookup_node
+                       g_tree_lookup
+                       q_tree_lookup (inlined)
+                       tcg_tb_lookup
+                       cpu_restore_state
+                       cpu_loop_exit_restore
+                       cpu_loop_exit_atomic
+                       helper_exit_atomic
+
+     6.92%  qemu-riscv64  qemu-riscv64      [.] ___pthread_mutex_unlock
+            |
+            ---__pthread_mutex_unlock (inlined)
+               |          
+                --6.88%--qemu_mutex_unlock_impl
+                          |          
+                          |--3.00%--tcg_tb_lookup
+                          |          cpu_restore_state
+                          |          cpu_loop_exit_restore
+                          |          cpu_loop_exit_atomic
+                          |          helper_exit_atomic
+                          |          
+                          |--2.49%--cpu_exec_step_atomic
+                          |          cpu_loop
+                          |          main
+                          |          __libc_start_call_main
+                          |          __libc_start_main (inlined)
+                          |          _start
+                          |          
+                          |--0.70%--start_exclusive
+                          |          start_exclusive
+                          |          cpu_exec_step_atomic
+                          |          cpu_loop
+                          |          main
+                          |          __libc_start_call_main
+                          |          __libc_start_main (inlined)
+                          |          _start
+                          |          
+                           --0.64%--cpu_loop
+                                     main
+                                     __libc_start_call_main
+                                     __libc_start_main (inlined)
+                                     _start
+
+     5.38%  qemu-riscv64  qemu-riscv64      [.] g_tree_lookup_node
+            |
+            ---g_tree_lookup_node
+               g_tree_lookup
+               |          
+                --5.34%--q_tree_lookup (inlined)
+                          tcg_tb_lookup
+                          cpu_restore_state
+                          cpu_loop_exit_restore
+                          cpu_loop_exit_atomic
+                          helper_exit_atomic
+
+     4.54%  qemu-riscv64  qemu-riscv64      [.] cpu_exec_end
+            |
+            ---cpu_exec_end
+               cpu_loop
+               main
+               __libc_start_call_main
+               __libc_start_main (inlined)
+               _start
+
+     3.98%  qemu-riscv64  qemu-riscv64      [.] page_get_flags
+            |          
+            |--3.10%--rcu_read_unlock (inlined)
+            |          rcu_read_auto_unlock (inlined)
+            |          glib_autoptr_clear_RCUReadAuto (inlined)
+            |          glib_autoptr_cleanup_RCUReadAuto (inlined)
+            |          page_get_flags
+            |          probe_access_internal (inlined)
+            |          |          
+            |           --3.06%--get_page_addr_code_hostp
+            |                     get_page_addr_code (inlined)
+            |                     tb_htable_lookup
+            |                     tb_lookup (inlined)
+            |                     |          
+            |                      --3.03%--cpu_exec_step_atomic
+            |                                cpu_loop
+            |                                main
+            |                                __libc_start_call_main
+            |                                __libc_start_main (inlined)
+            |                                _start
+            |          
+             --0.52%--page_get_flags
+                       probe_access_internal (inlined)
+                       |          
+                        --0.48%--get_page_addr_code_hostp
+                                  get_page_addr_code (inlined)
+                                  tb_htable_lookup
+                                  tb_lookup (inlined)
+                                  cpu_exec_step_atomic
+                                  cpu_loop
+                                  main
+                                  __libc_start_call_main
+                                  __libc_start_main (inlined)
+                                  _start
+
+     3.78%  qemu-riscv64  qemu-riscv64      [.] liveness_pass_1
+            |          
+            |--1.34%--la_reset_pref (inlined)
+            |          |          
+            |           --1.07%--la_func_end (inlined)
+            |                     liveness_pass_1
+            |                     tcg_gen_code
+            |                     setjmp_gen_code (inlined)
+            |                     tb_gen_code
+            |                     |          
+            |                      --0.95%--cpu_exec_loop (inlined)
+            |                                cpu_exec_setjmp (inlined)
+            |                                cpu_exec
+            |                                cpu_loop
+            |                                main
+            |                                __libc_start_call_main
+            |                                __libc_start_main (inlined)
+            |                                _start
+            |          
+            |--1.18%--la_global_sync (inlined)
+            |          |          
+            |          |--0.59%--la_bb_sync (inlined)
+            |          |          liveness_pass_1
+            |          |          tcg_gen_code
+            |          |          setjmp_gen_code (inlined)
+            |          |          tb_gen_code
+            |          |          cpu_exec_loop (inlined)
+            |          |          cpu_exec_setjmp (inlined)
+            |          |          cpu_exec
+            |          |          cpu_loop
+            |          |          main
+            |          |          __libc_start_call_main
+            |          |          __libc_start_main (inlined)
+            |          |          _start
+            |          |          
+            |           --0.59%--liveness_pass_1
+            |                     tcg_gen_code
+            |                     setjmp_gen_code (inlined)
+            |                     tb_gen_code
+            |                     |          
+            |                      --0.47%--cpu_exec_loop (inlined)
+            |                                cpu_exec_setjmp (inlined)
+            |                                cpu_exec
+            |                                cpu_loop
+            |                                main
+            |                                __libc_start_call_main
+            |                                __libc_start_main (inlined)
+            |                                _start
+            |          
+             --0.71%--liveness_pass_1
+                       tcg_gen_code
+                       setjmp_gen_code (inlined)
+                       tb_gen_code
+                       |          
+                        --0.60%--cpu_exec_loop (inlined)
+                                  cpu_exec_setjmp (inlined)
+                                  cpu_exec
+                                  cpu_loop
+                                  main
+                                  __libc_start_call_main
+                                  __libc_start_main (inlined)
+                                  _start
+
+     3.18%  qemu-riscv64  qemu-riscv64      [.] qht_lookup_custom
+            |          
+            |--1.38%--seqlock_read_begin (inlined)
+            |          qht_lookup_custom
+            |          tb_htable_lookup
+            |          tb_lookup (inlined)
+            |          |          
+            |          |--0.88%--cpu_exec_loop (inlined)
+            |          |          cpu_exec_setjmp (inlined)
+            |          |          cpu_exec
+            |          |          cpu_loop
+            |          |          main
+            |          |          __libc_start_call_main
+            |          |          __libc_start_main (inlined)
+            |          |          _start
+            |          |          
+            |           --0.43%--cpu_exec_step_atomic
+            |                     cpu_loop
+            |                     main
+            |                     __libc_start_call_main
+            |                     __libc_start_main (inlined)
+            |                     _start
+            |          
+            |--1.25%--qht_do_lookup (inlined)
+            |          qht_lookup_custom
+            |          tb_htable_lookup
+            |          tb_lookup (inlined)
+            |          |          
+            |          |--0.86%--cpu_exec_loop (inlined)
+            |          |          cpu_exec_setjmp (inlined)
+            |          |          cpu_exec
+            |          |          cpu_loop
+            |          |          main
+            |          |          __libc_start_call_main
+            |          |          __libc_start_main (inlined)
+            |          |          _start
+            |          |          
+            |           --0.39%--cpu_exec_step_atomic
+            |                     cpu_loop
+            |                     main
+            |                     __libc_start_call_main
+            |                     __libc_start_main (inlined)
+            |                     _start
+            |          
+             --0.31%--qht_lookup_custom
+                       tb_htable_lookup
+                       tb_lookup (inlined)
+
+     2.87%  qemu-riscv64  qemu-riscv64      [.] ___pthread_mutex_lock
+            |
+            ---__pthread_mutex_lock (inlined)
+               qemu_mutex_lock_impl
+               |          
+               |--1.17%--end_exclusive
+               |          end_exclusive
+               |          cpu_exec_step_atomic
+               |          cpu_loop
+               |          main
+               |          __libc_start_call_main
+               |          __libc_start_main (inlined)
+               |          _start
+               |          
+               |--0.90%--tcg_tb_lookup
+               |          cpu_restore_state
+               |          cpu_loop_exit_restore
+               |          cpu_loop_exit_atomic
+               |          helper_exit_atomic
+               |          
+                --0.68%--process_queued_cpu_work
+                          cpu_loop
+                          main
+                          __libc_start_call_main
+                          __libc_start_main (inlined)
+                          _start
+
+     2.77%  qemu-riscv64  qemu-riscv64      [.] cpu_exec
+            |          
+            |--1.76%--cpu_exec_enter (inlined)
+            |          cpu_exec
+            |          cpu_loop
+            |          main
+            |          __libc_start_call_main
+            |          __libc_start_main (inlined)
+            |          _start
+            |          
+             --0.82%--cpu_exec_exit (inlined)
+                       cpu_exec
+                       cpu_loop
+                       main
+                       __libc_start_call_main
+                       __libc_start_main (inlined)
+                       _start
+
+     2.51%  qemu-riscv64  qemu-riscv64      [.] process_queued_cpu_work
+            |
+            ---process_queued_cpu_work
+               cpu_loop
+               main
+               __libc_start_call_main
+               __libc_start_main (inlined)
+               _start
+
+     2.39%  qemu-riscv64  qemu-riscv64      [.] cpu_exec_step_atomic
+            |          
+             --2.16%--cpu_exec_step_atomic
+                       cpu_loop
+                       main
+                       __libc_start_call_main
+                       __libc_start_main (inlined)
+                       _start
+
+     2.37%  qemu-riscv64  qemu-riscv64      [.] __sigsetjmp
+            |
+            ---__sigsetjmp
+               |          
+               |--1.31%--cpu_exec_setjmp (inlined)
+               |          cpu_exec
+               |          cpu_loop
+               |          main
+               |          __libc_start_call_main
+               |          __libc_start_main (inlined)
+               |          _start
+               |          
+                --1.06%--cpu_exec_step_atomic
+                          cpu_loop
+                          main
+                          __libc_start_call_main
+                          __libc_start_main (inlined)
+                          _start
+
+     2.04%  qemu-riscv64  qemu-riscv64      [.] tcg_gen_code
+            |          
+            |--0.80%--tcg_reg_alloc_start (inlined)
+            |          tcg_gen_code
+            |          setjmp_gen_code (inlined)
+            |          tb_gen_code
+            |          |          
+            |           --0.57%--cpu_exec_loop (inlined)
+            |                     cpu_exec_setjmp (inlined)
+            |                     cpu_exec
+            |                     cpu_loop
+            |                     main
+            |                     __libc_start_call_main
+            |                     __libc_start_main (inlined)
+            |                     _start
+            |          
+             --0.63%--tcg_reg_alloc_op (inlined)
+                       tcg_gen_code
+                       setjmp_gen_code (inlined)
+                       tb_gen_code
+                       |          
+                        --0.51%--cpu_exec_loop (inlined)
+                                  cpu_exec_setjmp (inlined)
+                                  cpu_exec
+                                  cpu_loop
+                                  main
+                                  __libc_start_call_main
+                                  __libc_start_main (inlined)
+                                  _start
+
+     1.91%  qemu-riscv64  qemu-riscv64      [.] cpu_exec_loop.isra.0
+            |          
+            |--0.93%--cpu_test_interrupt (inlined)
+            |          cpu_handle_interrupt (inlined)
+            |          cpu_exec_loop (inlined)
+            |          cpu_exec_setjmp (inlined)
+            |          cpu_exec
+            |          cpu_loop
+            |          main
+            |          __libc_start_call_main
+            |          __libc_start_main (inlined)
+            |          _start
+            |          
+            |--0.51%--cpu_exec_loop (inlined)
+            |          cpu_exec_setjmp (inlined)
+            |          cpu_exec
+            |          cpu_loop
+            |          main
+            |          __libc_start_call_main
+            |          __libc_start_main (inlined)
+            |          _start
+            |          
+             --0.27%--tb_lookup (inlined)
+                       cpu_exec_loop (inlined)
+                       cpu_exec_setjmp (inlined)
+                       cpu_exec
+                       cpu_loop
+                       main
+                       __libc_start_call_main
+                       __libc_start_main (inlined)
+                       _start
+
+     1.73%  qemu-riscv64  qemu-riscv64      [.] start_exclusive
+            |
+            ---start_exclusive
+               |          
+               |--1.42%--start_exclusive
+               |          cpu_exec_step_atomic
+               |          cpu_loop
+               |          main
+               |          __libc_start_call_main
+               |          __libc_start_main (inlined)
+               |          _start
+               |          
+                --0.31%--cpu_exec_step_atomic
+                          cpu_loop
+                          main
+                          __libc_start_call_main
+                          __libc_start_main (inlined)
+                          _start
+
+     1.59%  qemu-riscv64  qemu-riscv64      [.] riscv_get_tb_cpu_state
+            |          
+            |--0.90%--riscv_get_tb_cpu_state
+            |          |          
+            |           --0.47%--cpu_exec_step_atomic
+            |                     cpu_loop
+            |                     main
+            |                     __libc_start_call_main
+            |                     __libc_start_main (inlined)
+            |                     _start
+            |          
+             --0.59%--extract64 (inlined)
+                       riscv_get_tb_cpu_state
+                       cpu_exec_loop (inlined)
+                       cpu_exec_setjmp (inlined)
+                       cpu_exec
+                       cpu_loop
+                       main
+                       __libc_start_call_main
+                       __libc_start_main (inlined)
+                       _start
+
+     1.26%  qemu-riscv64  qemu-riscv64      [.] process_pending_signals
+            |
+            ---process_pending_signals
+               cpu_loop
+               main
+               __libc_start_call_main
+               __libc_start_main (inlined)
+               _start
+
+     1.26%  qemu-riscv64  qemu-riscv64      [.] mutex_is_bql
+            |
+            ---mutex_is_bql
+               qemu_mutex_post_lock (inlined)
+               qemu_mutex_lock_impl
+               |          
+               |--0.95%--process_queued_cpu_work
+               |          cpu_loop
+               |          main
+               |          __libc_start_call_main
+               |          __libc_start_main (inlined)
+               |          _start
+               |          
+                --0.31%--tcg_tb_lookup
+                          cpu_restore_state
+                          cpu_loop_exit_restore
+                          cpu_loop_exit_atomic
+                          helper_exit_atomic
+
+     1.06%  qemu-riscv64  qemu-riscv64      [.] riscv_cpu_virt_mem_enabled
+            |
+            ---riscv_cpu_virt_mem_enabled
+               riscv_get_tb_cpu_state
+               |          
+                --1.02%--cpu_exec_loop (inlined)
+                          cpu_exec_setjmp (inlined)
+                          cpu_exec
+                          cpu_loop
+                          main
+                          __libc_start_call_main
+                          __libc_start_main (inlined)
+                          _start
+
+     0.93%  qemu-riscv64  qemu-riscv64      [.] qemu_mutex_unlock_impl
+            |          
+             --0.69%--qemu_mutex_unlock_impl
+                       |          
+                        --0.27%--start_exclusive
+                                  start_exclusive
+                                  cpu_exec_step_atomic
+                                  cpu_loop
+                                  main
+                                  __libc_start_call_main
+                                  __libc_start_main (inlined)
+                                  _start
+
+     0.90%  qemu-riscv64  qemu-riscv64      [.] helper_lookup_tb_ptr
+            |          
+            |--0.39%--tb_jmp_cache_hash_func (inlined)
+            |          tb_lookup (inlined)
+            |          helper_lookup_tb_ptr
+            |          
+             --0.31%--helper_lookup_tb_ptr
+
+     0.88%  qemu-riscv64  qemu-riscv64      [.] cpu_unwind_data_from_tb
+            |          
+             --0.65%--decode_sleb128 (inlined)
+                       cpu_unwind_data_from_tb
+                       cpu_restore_state_from_tb
+                       cpu_restore_state
+                       cpu_loop_exit_restore
+                       cpu_loop_exit_atomic
+                       helper_exit_atomic
+
+     0.78%  qemu-riscv64  qemu-riscv64      [.] tb_lookup_cmp
+            |          
+             --0.62%--tb_lookup_cmp
+                       qht_do_lookup (inlined)
+                       qht_lookup_custom
+                       tb_htable_lookup
+                       tb_lookup (inlined)
+                       |          
+                        --0.43%--cpu_exec_loop (inlined)
+                                  cpu_exec_setjmp (inlined)
+                                  cpu_exec
+                                  cpu_loop
+                                  main
+                                  __libc_start_call_main
+                                  __libc_start_main (inlined)
+                                  _start
+
+     0.78%  qemu-riscv64  qemu-riscv64      [.] get_ptr_rcu_reader
+            |
+            ---get_ptr_rcu_reader
+               |          
+                --0.74%--rcu_read_unlock (inlined)
+                          rcu_read_auto_unlock (inlined)
+                          |          
+                           --0.70%--helper_riscv_invalidate_reservations
+
+     0.76%  qemu-riscv64  qemu-riscv64      [.] tb_htable_lookup
+            |          
+            |--0.49%--qemu_xxhash8 (inlined)
+            |          tb_hash_func (inlined)
+            |          tb_htable_lookup
+            |          tb_lookup (inlined)
+            |          |          
+            |           --0.29%--cpu_exec_loop (inlined)
+            |                     cpu_exec_setjmp (inlined)
+            |                     cpu_exec
+            |                     cpu_loop
+            |                     main
+            |                     __libc_start_call_main
+            |                     __libc_start_main (inlined)
+            |                     _start
+            |          
+             --0.27%--tb_htable_lookup
+                       tb_lookup (inlined)
+
+     0.74%  qemu-riscv64  qemu-riscv64      [.] tcg_optimize
+            |          
+             --0.39%--tcg_optimize
+                       tcg_gen_code
+                       setjmp_gen_code (inlined)
+                       tb_gen_code
+                       cpu_exec_loop (inlined)
+                       cpu_exec_setjmp (inlined)
+                       cpu_exec
+                       cpu_loop
+                       main
+                       __libc_start_call_main
+                       __libc_start_main (inlined)
+                       _start
+
+     0.69%  qemu-riscv64  qemu-riscv64      [.] interval_tree_subtree_search
+            |
+            ---interval_tree_subtree_search
+               pageflags_find (inlined)
+               page_get_flags
+               probe_access_internal (inlined)
+               |          
+                --0.61%--get_page_addr_code_hostp
+                          get_page_addr_code (inlined)
+                          tb_htable_lookup
+                          tb_lookup (inlined)
+                          |          
+                          |--0.30%--cpu_exec_step_atomic
+                          |          cpu_loop
+                          |          main
+                          |          __libc_start_call_main
+                          |          __libc_start_main (inlined)
+                          |          _start
+                          |          
+                           --0.27%--cpu_exec_loop (inlined)
+                                     cpu_exec_setjmp (inlined)
+                                     cpu_exec
+                                     cpu_loop
+                                     main
+                                     __libc_start_call_main
+                                     __libc_start_main (inlined)
+                                     _start
+
+     0.66%  qemu-riscv64  qemu-riscv64      [.] cpu_loop
+            |
+            ---cpu_loop
+               main
+               __libc_start_call_main
+               __libc_start_main (inlined)
+               _start
+
+     0.63%  qemu-riscv64  qemu-riscv64      [.] qemu_process_cpu_events
+            |
+            ---qemu_process_cpu_events
+               cpu_loop
+               main
+               __libc_start_call_main
+               __libc_start_main (inlined)
+               _start
+
+     0.55%  qemu-riscv64  qemu-riscv64      [.] helper_exit_atomic
+            |
+            ---helper_exit_atomic
+
+     0.55%  qemu-riscv64  qemu-riscv64      [.] tcg_tb_lookup
+            |
+            ---tcg_tb_lookup
+               cpu_restore_state
+               cpu_loop_exit_restore
+               cpu_loop_exit_atomic
+               helper_exit_atomic
+
+     0.55%  qemu-riscv64  qemu-riscv64      [.] interval_tree_insert
+            |          
+             --0.27%--interval_tree_insert
+                       tb_record (inlined)
+                       tb_link_page
+                       tb_gen_code
+
+     0.44%  qemu-riscv64  qemu-riscv64      [.] qemu_mutex_lock_impl
+            |          
+             --0.33%--qemu_mutex_lock_impl
+                       |          
+                        --0.25%--process_queued_cpu_work
+                                  cpu_loop
+                                  main
+                                  __libc_start_call_main
+                                  __libc_start_main (inlined)
+                                  _start
+
+     0.31%  qemu-riscv64  qemu-riscv64      [.] cpu_loop_exit_atomic
+            |          
+             --0.27%--cpu_loop_exit_atomic
+                       helper_exit_atomic
+
+     0.31%  qemu-riscv64  qemu-riscv64      [.] la_cross_call
+            |
+            ---la_cross_call
+               liveness_pass_1
+               tcg_gen_code
+               setjmp_gen_code (inlined)
+               tb_gen_code
+
+     0.31%  qemu-riscv64  qemu-riscv64      [.] liveness_pass_0
+            |
+            ---liveness_pass_0
+               tcg_gen_code
+               setjmp_gen_code (inlined)
+               tb_gen_code
+               |          
+                --0.27%--cpu_exec_loop (inlined)
+                          cpu_exec_setjmp (inlined)
+                          cpu_exec
+                          cpu_loop
+                          main
+                          __libc_start_call_main
+                          __libc_start_main (inlined)
+                          _start
+
+     0.29%  qemu-riscv64  qemu-riscv64      [.] tb_gen_code
+     0.28%  qemu-riscv64  qemu-riscv64      [.] g_hash_table_lookup
+            |
+            ---g_hash_table_lookup
+               tcg_constant_internal
+
+     0.27%  qemu-riscv64  qemu-riscv64      [.] get_page_addr_code_hostp
+
+
+#
+# (Cannot load tips.txt file, please install perf!)
+#

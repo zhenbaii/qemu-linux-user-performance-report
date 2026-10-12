@@ -1,0 +1,55 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 2K of event 'cycles:u'
+# Event count (approx.): 64085497676
+#
+# Children      Self  Command       Shared Object  Symbol                    
+# ........  ........  ............  .............  ..........................
+#
+    28.23%     0.55%  qemu-riscv64  qemu-riscv64   [.] helper_exit_atomic
+            |
+            ---helper_exit_atomic
+               |          
+                --27.68%--cpu_loop_exit_atomic
+                          |          
+                           --27.37%--cpu_loop_exit_restore
+                                     |          
+                                      --27.06%--cpu_restore_state
+                                                |          
+                                                |--18.10%--tcg_tb_lookup
+                                                |          |          
+                                                |          |--12.75%--q_tree_lookup (inlined)
+                                                |          |          g_tree_lookup
+                                                |          |          |          
+                                                |          |           --12.67%--g_tree_lookup_node
+                                                |          |                     |          
+                                                |          |                      --7.33%--tb_tc_cmp
+                                                |          |                                |          
+                                                |          |                                 --1.85%--ptr_cmp_tb_tc (inlined)
+                                                |          |          
+                                                |          |--3.20%--qemu_mutex_unlock_impl
+                                                |          |          |          
+                                                |          |           --3.00%--__pthread_mutex_unlock (inlined)
+                                                |          |          
+                                                |           --1.37%--qemu_mutex_lock_impl
+                                                |                     |          
+                                                |                     |--0.90%--__pthread_mutex_lock (inlined)
+                                                |                     |          
+                                                |                      --0.39%--qemu_mutex_post_lock (inlined)
+                                                |                                |          
+                                                |                                 --0.31%--mutex_is_bql
+                                                |          
+                                                 --8.80%--cpu_restore_state_from_tb
+                                                           |          
+                                                            --0.88%--cpu_unwind_data_from_tb
+                                                                      |          
+                                                                       --0.65%--decode_sleb128 (inlined)
+
+
+
+#
+# (Cannot load tips.txt file, please install perf!)
+#

@@ -1,11 +1,4 @@
-# quprof
-
-- 命令：`['osc', 'build', '--vm-type=chroot', '--skip-local-service-run', '-j', '4', 'riscv64', 'riscv64']`
-- 状态：退出码 0；collector ok；validation ok
 - 时间：wall 3400.425s；cgroup CPU 11626.957s
-- 采样：cycles:u；已证实 QEMU 样本 2165478；lost 0
-- 占比分母：QEMU self period 24814628250341；unknown 11.4%
-- 完整性：解析 2165838/2165838；未识别元数据 0
 - 范围：cgroup（CPU 含全部进程）；匿名代码归 unknown；JIT 区域、coarse-events 未采集
 
 ## 工具线索（采样时线程名）
@@ -39,7 +32,7 @@
 
 ## 符号
 
-共 851 个可命名符号；按 period 排序，仅列前 8 个中占比 ≥1% 的项；若均不足则列前 3 个。完整聚合热点见 [`hotspots.csv.gz`](hotspots.csv.gz)；原始采样未纳入网页发布包。
+共 851 个可命名符号；按 period 排序，仅列前 8 个中占比 ≥1% 的项；若均不足则列前 3 个。
 
 | 符号 | 机制 | 占比 | 样本 |
 | --- | --- | ---: | ---: |

@@ -1,11 +1,4 @@
-# quprof
-
-- 命令：`['osc', '-A', 'https://build.openruyi.cn', 'build', '--skip-local-service-run', '--offline', '--keep-pkgs', '/home/holo/ospp-qemu-optimisation/research/build-workloads/runs/20261012-092853-lz4-coarse/rpms', '-j', '4', 'riscv64', 'riscv64']`
-- 状态：退出码 0；collector ok；validation ok
 - 时间：wall 11309.682s；cgroup CPU 55126.128s
-- 采样：cycles:u；已证实 QEMU 样本 9463185；lost 0
-- 占比分母：QEMU self period 58312881997970；unknown 14.1%
-- 完整性：解析 9463491/9463491；未识别元数据 0
 - 范围：cgroup（CPU 含全部进程）；匿名代码归 unknown；JIT 区域、coarse-events 未采集
 
 ## 工具线索（采样时线程名）
@@ -39,7 +32,7 @@
 
 ## 符号
 
-共 539 个可命名符号；按 period 排序，仅列前 8 个中占比 ≥1% 的项；若均不足则列前 3 个。完整聚合热点见 [`hotspots.csv.gz`](hotspots.csv.gz)；原始采样未纳入网页发布包。
+共 539 个可命名符号；按 period 排序，仅列前 8 个中占比 ≥1% 的项；若均不足则列前 3 个。
 
 | 符号 | 机制 | 占比 | 样本 |
 | --- | --- | ---: | ---: |

@@ -1,9 +1,0 @@
-
- Performance counter stats for './research/xz-localization/replay-cc1.sh C 1' (3 runs):
-
-           1779.45 msec task-clock                       #    1.000 CPUs utilized               ( +-  0.34% )
-        8616302518      cycles:u                                                                ( +-  0.13% )
-       25925130472      instructions:u                   #    3.01  insn per cycle              ( +-  0.01% )
-
-           1.78006 +- 0.00614 seconds time elapsed  ( +-  0.34% )
-

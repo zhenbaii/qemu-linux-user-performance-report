@@ -1,6 +1,0 @@
-d1e47713d49709431e9b20fcdad000cffdae8c4b215d6c8a6d6bed3565225ca7  research/shareable-report/workloads/file/hotspots.csv.gz
-a4cf4fbe02792282953ea636b3e6261ce06e20a476a3e8f73e31c65e320dcbe9  research/shareable-report/workloads/lz4/hotspots.csv.gz
-5d0fdfa6ea630d7a07bb97f14d0142b117295a128ed2b29cbfeba6825892d983  research/shareable-report/workloads/which/hotspots.csv.gz
-e326c80018d58cb75fb13fc4e7b5544b3f03ce1ca4456ea9a46a8752a5a8cbb8  research/shareable-report/workloads/xz/hotspots.csv.gz
-820ac1f6a7dacfa40dc42188922498708ebf1714ce7b62ef9c6de551003592a0  research/shareable-report/workloads/zlib-ng/hotspots.csv.gz
-7c0104245c11d1d94ebc3a1f55457ccc27156e42caadf23abe8809658a70c971  research/shareable-report/localization/patches/riscv-linux-user-multi-cpu-reservation-v1.diff

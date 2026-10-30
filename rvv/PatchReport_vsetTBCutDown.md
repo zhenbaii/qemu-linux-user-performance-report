@@ -1,11 +1,20 @@
 ---
 Date: 2026-10-28
 ---
-这个报告是关于老师在群里提到的vset_* 家族指令的TB截断问题的实现报告.
+这个报告是关于老师在群里提到的vset_* 家族指令的TB截断问题的实现报告. 实验表明, 阻止TB截断不会带来性能的提升, 反而会恶化. 
 
-旧 continuation 实验: https://github.com/zhenbaii/qemu/tree/research/vset-tb-continuation
+因此, 后面针对vset家族指令做了不同的优化方式. 主要是helper的TCG IR化和立即数情况的direct chaining. 
 
-当前 direct-chain + TCG IR 实验: https://github.com/zhenbaii/qemu/tree/research/vset-direct-chain-full-ir
+这两个实现都只在user mode下做, 而没有到system mode 做.
+
+
+PATCH LINK:
+TB截断实验: https://github.com/zhenbaii/qemu/tree/research/vset-tb-continuation
+direct-chain + TCG IR 实验: https://github.com/zhenbaii/qemu/tree/research/vset-direct-chain-full-ir
+
+BASELINE:
+QEMU 官方提交 [`d73149283205645625bfa9fe029cfb68e4c4a9ae`](https://gitlab.com/qemu-project/qemu/-/commit/d73149283205645625bfa9fe029cfb68e4c4a9ae)，提交日期为 2026-10-24。
+
 
 ## 原始上游实现
 
@@ -76,20 +85,6 @@ do_vsetvl()
 
 因此, 补丁的思路就是, 对于存在立即数的场景, 即除了vsetvl之外的两个指令, 不去截断TB, 而选择继续翻译下去, 从而可以省去一部分的exit + lookup开销.
 
-## 实现补丁
-
-- QEMU基线: [`d731492832`](https://github.com/zhenbaii/qemu/commit/d73149283205645625bfa9fe029cfb68e4c4a9ae), 2026-10-24
-- 实验分支: [`research/vset-tb-continuation`](https://github.com/zhenbaii/qemu/tree/research/vset-tb-continuation)
-- 完整diff与三提交列表: [`d731492832...ea7e2e6312`](https://github.com/zhenbaii/qemu/compare/d73149283205645625bfa9fe029cfb68e4c4a9ae...ea7e2e63123b588286dcb1e263a5c6558a460598)
-
-三个提交分别完成:
-
-1. 提取并共享vtype decoder;
-2. 让立即数vtype场景可以继续当前TB;
-3. 修复动态AVL可能导致的后继TB stale chaining.
-
-该分支用于本地性能研究和复现实验, 不作为可直接提交上游的版本.
-
 ## 实验结果
 
 | 方案                   | 长 `cc1` cycles | zlib-ng RVV cycles |
@@ -133,25 +128,71 @@ do_vsetvl()
 
 ## 替代方案：保留 TB 边界的 direct chain + TCG IR
 
-新方案仍在 `vset*` 后结束当前 TB，因此不同来源可以共享同一个后继 TB。区别在于：
+新方案下, 我们不再在立即数场景下不截断TB, 而是依旧截断, 避免旧方案中后继代码重复翻译问题. 根据vtype和AVL是否是立即数:
 
-- `vsetivli` 的 AVL/vtype 全部已知，使用一个 jump slot；
-- `vsetvli` 的 vtype 已知，动态 AVL 只会让后继 key 的 `VL_EQ_VLMAX` 二选一，因此
-  根据运行时 `vl == vlmax` 选择两个 jump slot；
-- `vsetvli x0,x0` 和寄存器 vtype 的 `vsetvl` 保留原动态 lookup；
-- 在 user-mode 下，将安全的立即数 vtype 路径从 `helper_vsetvl` 改为等价 TCG IR，
-  直接更新 `vtype/vl/vstart/vill/rd`；system-mode 不变。
+### vsetvl
 
-这样既保留了后继 TB 共享，也不会把 `vl_eq_vlmax=false` 的保守状态传播到后继 vector
-指令。实现基于同一干净提交 `d731492832`，最终提交为 `a814a8ee55`。
+保持主线原本的实现, 因为没有立即数可以提供任何额外的信息.
 
-### 正确性
+### vsetivli
 
-- 14 组 vector 状态矩阵、2048 个 vtype × 7 个 AVL 全部一致；
-- 非法 vtype、fault/resume 和动态 AVL 后继 key 测试一致；
-- clean/candidate 的状态矩阵 TB 数同为 59，确认没有 continuation；
-- `vsetivli` Trace 从 1003 降为 5；动态 `vsetvli` Trace 从 3005 降为 1010，两个
-  jump slot 都实际建立链接。
+这种情况下, AVL和vtype都是立即数. 因此, 对于当前TB(包含了vsetivli的这个TB)而言, 其用于查询下一个TB的状态矩阵(PC, flags, cflags, cs_base)是恒定不变的. 理由如下:
+   -  不考虑vset家族指令. 在翻译阶段, 如果这个TB中的任何指令存在改变了状态矩阵的情况, 并且这种改变在翻译期间是无法知晓的(比如那些依赖运行时寄存器值的指令), 那么按照QEMU的原则, 是要在那条指令就产生TB截断的. 换句话说, 对于包含了vsetivli的这个TB而言, 其前序指令对状态矩阵的改变是在翻译期就知道的. 而能够进入这个TB, 本身也要求满足这个TB的状态矩阵. 
+   - 因此, 在执行到vsetivli后, 在不同的执行流下, 其状态矩阵是固定不变的. 而现在vsetivli对于状态矩阵的改变也是在翻译期间就可以知道的, 因此在执行完这个TB后, 用于检索下一个TB的状态矩阵本身也是恒定不变的.
+
+因此, 对于这个指令, 我们用direct chaining来优化.
+
+### vsetvli
+
+这种情况下, AVL由运行时的寄存器值提供, vtype依旧是立即数. 因此, 我们要按照情况选择合适的优化策略. 
+
+#### `rd == x0 && rs1 == x0`
+根据规范, 这是`AVL =  旧 vl`. 因此, 在翻译期无法做任何优化, 回退最原本的上游实现:
+```
+读取旧 VL
+    → helper_vsetvl 处理状态更新
+    → 更新 PC
+    → lookup，根据真实 CPU 状态选择后继 TB
+```
+
+#### `vtype`无效
+这个情况下, 下一个TB的状态矩阵也是确定的, 可以采用direct chaining:
+```
+TCG IR 写回确定状态
+    → slot 0
+    → 后继 TB
+```
+
+#### `rs1 == x0 && rd != x0`
+根据规范, 是请求最大VL. 相当于AVL翻译期已知, 因此也是采用direct chaining. 
+
+#### 普通寄存器 AVL
+此时, AVL在翻译期间无法知晓. 但是仔细分析可以发现, 对于不同的执行流, 最后对于状态矩阵而言, 最终只会影响到`VL_EQ_MAX`这个状态, 其他状态在翻译期间都是可以确定下来的. 因此, 也是可以采用direct chaining, 不过要用到全部两个slot:
+```
+运行时计算 VL，写回向量状态
+                │
+          VL == VLMAX？
+           /         \
+         是           否
+         │            │
+       slot 0       slot 1
+         │            │
+  full-length TB   non-full TB
+```
+
+#### vsetvl helper的IR化
+如下表:
+
+| 情况                        | 翻译期知道什么            | 当前如何处理            |
+| ------------------------- | ------------------ | ----------------- |
+| `vsetivli`                | vtype、AVL 都已知      | 提前算出最终结果，IR 只负责写回 |
+| `vsetvli rd,x0,…`，`rd≠x0` | vtype 已知，确定请求最大 VL | IR 写入 `VL=VLMAX`  |
+| 普通 `vsetvli`，`rs1≠x0`     | vtype 已知，AVL 未知    | IR 在运行时计算 VL 并写回  |
+| 上述路径的 vtype 无效            | 无效性在翻译期已知          | IR 写入确定的非法状态      |
+| `vsetvli x0,x0,…`         | 依赖旧 VL 和兼容策略       | 保留 helper，优先于上述分类 |
+| `vsetvl`                  | vtype 通常来自运行时寄存器   | 保留原本helper        |
+
+
 
 ### 性能
 
@@ -161,16 +202,3 @@ do_vsetvl()
 | --- | ---: | ---: | ---: |
 | zlib-ng RVV，五轮 | -1.94% | **-4.97%** | **-5.98%** |
 | 长 `cc1`，三轮 | -5.21% | **-7.78%** | **-13.58%** |
-
-full IR 相对已经保留 helper 的 direct-chain，zlib-ng 和长 `cc1` 又分别降低 3.08% 和
-2.71% cycles。长 `cc1` 的一轮机制 profile 中，`helper_vsetvl` 从 2.37% 降到
-0.01%，`helper_lookup_tb_ptr` 从 14.28% 降到 12.90%，说明热的立即数 vtype helper
-路径确实被 IR 取代。profile 用于解释机制，性能结论以多轮 `perf stat` 为准。
-
-当前判断是：这个替代方案值得继续扩大真实构建负载和 host 配置验证。它仍是本地
-linux-user 研究实现；如需向 QEMU 上游推进，应由开发者依据实验结论独立重写并审查。
-
-实现分支与完整 diff：
-
-- [`research/vset-direct-chain-full-ir`](https://github.com/zhenbaii/qemu/tree/research/vset-direct-chain-full-ir)
-- [`d731492832...a814a8ee55`](https://github.com/zhenbaii/qemu/compare/d73149283205645625bfa9fe029cfb68e4c4a9ae...a814a8ee55)

@@ -109,23 +109,6 @@ do_vsetvl()
 入口状态 C 的 TB：vsetivli + 后继代码
 ```
 
-这是已经直接观察到的一项回退机制：它会改变翻译到 host 后的代码量和布局。现有数据
-还不能在 I-cache、uop cache、寄存器压力和依赖停顿之间给出唯一的微架构归因。
-
-另外，动态 AVL continuation 还有两个结构性代价：translator 把
-`vl_eq_vlmax` 保守置为 false，使同一 TB 内后续 vector 指令可能失去 GVEC 快径；修复
-动态出口 key 时引入的 sticky `outgoing_tb_key_dynamic` 会让 TB 后续的直接跳转和循环
-回边也退回动态 lookup。
-
-上表两行来自不同时间、不同候选范围的实验，`vsetvli + vsetivli` 的长 `cc1` 也没有在
-那一轮重测，不能按“放行指令越多就必然越慢”直接做单调比较。性能计数使用宿主机
-`perf stat` 的 `cycles:u`，不是 guest `rdcycle`。重复翻译则由 `-d in_asm/-d out_asm`
-直接验证：候选少 31 个 TB，但多 130 个重复 guest 指令实例、129 行 host 指令和
-8,453 字节输出汇编。
-
-因此, 关于删除 TB 边界的 continuation 方案不再继续推进. 后续换成保留边界、对有限
-后继 key 做 direct chaining，并进一步尝试消除 helper。
-
 ## 替代方案：保留 TB 边界的 direct chain + TCG IR
 
 新方案下, 我们不再在立即数场景下不截断TB, 而是依旧截断, 避免旧方案中后继代码重复翻译问题. 根据vtype和AVL是否是立即数:
